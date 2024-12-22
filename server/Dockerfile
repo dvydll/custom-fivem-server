@@ -7,20 +7,26 @@ WORKDIR /fivem
 
 # Instalar dependencias
 RUN apt-get update && apt-get install -y \
+    xz-utils \
     curl \
     git \
     unzip \
     mariadb-client \
-    screen
+    screen \
+    tar
 
-# Descargar la última build de FiveM
-RUN curl -O https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/latest.tar.xz && \
+# Descargar la última build de FiveM desde la nueva URL
+RUN curl -O https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/12092-c9700385dfad9008c8b7888a61d3901451c4dc29/fx.tar.xz && \
+    if [ ! -f fx.tar.xz ]; then \
+        echo "Failed to download FiveM artifact"; \
+        exit 1; \
+    fi && \
     mkdir fxserver && \
-    tar -xvf latest.tar.xz -C fxserver && \
-    rm latest.tar.xz
+    tar -xvf fx.tar.xz -C fxserver && \
+    rm fx.tar.xz
 
 # Copiar archivos de configuración al contenedor
-COPY server-data /fivem/server-data
+COPY ./fivem/server-data /fivem/server-data
 
 # Exponer los puertos necesarios
 EXPOSE 30120/udp 30120/tcp 40120

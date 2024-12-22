@@ -1,3 +1,5 @@
+cd fivem-docker
+
 # Construye la imagen
 docker-compose build
 
