@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  fivem-server:
+    build: .
+    container_name: fivem-server
+    ports:
+      - "30120:30120/udp"
+      - "30120:30120/tcp"
+      - "40120:40120"
+    volumes:
+      - ./server-data:/fivem/server-data
+    restart: always
+
+  mysql:
+    image: mariadb:latest
+    container_name: fivem-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: tu_contraseña
+      MYSQL_DATABASE: fivem
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
