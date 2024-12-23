@@ -1,0 +1,36 @@
+version: "3.9"
+services:
+  # Servidor FiveM
+  fivem-server:
+    build:
+      context: ./ # La ruta donde está tu Dockerfile
+    container_name: fivem-server
+    restart: always
+    ports:
+      - "30120:30120" # Puerto para conexiones de FiveM
+      - "40120:40120" # Puerto para txAdmin (si lo usas)
+    volumes:
+      - ./fivem/server-data:/fivem/server-data # Enlaza tu carpeta local de datos con el contenedor
+    environment:
+      - LICENSE_KEY=${FIVEM_LICENSE_KEY} # Tu clave de licencia
+    networks:
+      - fivem-network
+
+  # Base de datos MySQL (MariaDB)
+  mysql:
+    image: mariadb:latest
+    container_name: fivem-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} # Contraseña para el usuario root
+      MYSQL_DATABASE: fivem # Nombre de la base de datos
+    ports:
+      - "3306:3306" # Puerto para acceder a la base de datos
+    volumes:
+      - ./server/server-data/database:/var/lib/mysql # Enlaza la carpeta de base de datos
+    networks:
+      - fivem-network
+
+networks:
+  fivem-network:
+    driver: bridge
